@@ -26,6 +26,7 @@ class Linear(minitorch.Module):
             x.view(batch, in_size) @ self.weights.value.view(in_size, self.out_size)
         ).view(batch, self.out_size) + self.bias.value
 
+
 class Conv1d(minitorch.Module):
     def __init__(self, in_channels, out_channels, kernel_width):
         super().__init__()

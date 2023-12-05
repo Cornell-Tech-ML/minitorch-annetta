@@ -96,10 +96,11 @@ def _tensor_conv1d(
                         in_pos = index_to_position(in_index, s1)
                         total += input[in_pos] * weight[w_p]
                 else:
-                    if width - out_index[2] - k - 1 >= 0:
+                    if width - out_index[2] - k > 0:
                         in_index = np.array([out_index[0], j, out_index[2] + k], dtype=np.int32)
                         in_pos = index_to_position(in_index, s1)
                         total += input[in_pos] * weight[w_p]
+        out[i] = total
     # raise NotImplementedError("Need to implement for Task 4.1")
 
 
@@ -242,7 +243,7 @@ def _tensor_conv2d(
                             in_pos = index_to_position(in_index, s1)
                             total += input[in_pos] * weight[w_p]
                     else:
-                        if height - out_index[2] - h - 1 >= 0 and width - out_index[3] - w - 1 >= 0:
+                        if height - out_index[2] - h > 0 and width - out_index[3] - w > 0:
                             in_index = np.array([out_index[0], j, out_index[2] + h, out_index[3] + w], dtype=np.int32)
                             in_pos = index_to_position(in_index, s1)
                             total += input[in_pos] * weight[w_p]
