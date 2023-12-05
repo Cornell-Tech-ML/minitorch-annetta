@@ -90,7 +90,7 @@ def _tensor_conv1d(
             for k in prange(kw):
                 w_i = np.array([out_index[1], j, k], dtype=np.int32)
                 w_p = index_to_position(w_i, s2)
-                if reversed:
+                if reverse:
                     if out_index[2] - k >= 0:
                         in_index = np.array([out_index[0], j, out_index[2] - k], dtype=np.int32)
                         in_pos = index_to_position(in_index, s1)

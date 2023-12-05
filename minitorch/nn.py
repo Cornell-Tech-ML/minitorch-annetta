@@ -26,9 +26,8 @@ def tile(input: Tensor, kernel: Tuple[int, int]) -> Tuple[Tensor, int, int]:
     # TODO: Implement for Task 4.3.
     h = height // kh
     w = width // kw
-    
     input = input.contiguous()
-    input = input.reshape(batch, channel, h, kh, w, kw)
+    input = input.view(batch, channel, h, kh, w, kw)
     input = input.permute(0, 1, 2, 4, 3, 5)
     input = input.contiguous()
     input = input.view(batch, channel, h, w, kh * kw)

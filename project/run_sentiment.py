@@ -26,7 +26,6 @@ class Linear(minitorch.Module):
             x.view(batch, in_size) @ self.weights.value.view(in_size, self.out_size)
         ).view(batch, self.out_size) + self.bias.value
 
-
 class Conv1d(minitorch.Module):
     def __init__(self, in_channels, out_channels, kernel_width):
         super().__init__()
@@ -92,8 +91,7 @@ class CNNSentimentKim(minitorch.Module):
         conv1 = self.conv1(embeddings).relu()
         conv2 = self.conv2(embeddings).relu()
         conv3 = self.conv3(embeddings).relu()
-        
-        output = minitorch.max(conv1, 2) + minitorch.max(conv2, 2) + minitorch.max(conv3, 2)   
+        output = minitorch.max(conv1, 2) + minitorch.max(conv2, 2) + minitorch.max(conv3, 2)
         output = output.view(batch, self.feature_map_size)
         if self.training:
             output = minitorch.dropout(output, self.dropout)

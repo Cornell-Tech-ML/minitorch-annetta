@@ -344,7 +344,6 @@ def _tensor_matrix_multiply(
                     b_i += b_strides[1]
                 out_i = i * out_strides[0] + j * out_strides[1] + k * out_strides[2]
                 out[out_i] = total
-    
     # raise NotImplementedError("Need to implement for Task 3.2")
 
 
