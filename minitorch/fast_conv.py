@@ -84,7 +84,6 @@ def _tensor_conv1d(
     for i in prange(out_size):
         out_index = np.empty(MAX_DIMS, dtype=np.int32)
         to_index(i, out_shape, out_index)
-        out_index = out_index[0:3]
         total = 0.0
         for j in prange(in_channels):
             for k in prange(kw):
@@ -96,13 +95,13 @@ def _tensor_conv1d(
                         in_pos = index_to_position(in_index, s1)
                         total += input[in_pos] * weight[w_p]
                 else:
-                    if width - out_index[2] - k > 0:
+                    if width > out_index[2] + k :
                         in_index = np.array([out_index[0], j, out_index[2] + k], dtype=np.int32)
                         in_pos = index_to_position(in_index, s1)
                         total += input[in_pos] * weight[w_p]
         out[i] = total
     # raise NotImplementedError("Need to implement for Task 4.1")
-
+    
 
 tensor_conv1d = njit(parallel=True)(_tensor_conv1d)
 
@@ -228,9 +227,8 @@ def _tensor_conv2d(
 
     # TODO: Implement for Task 4.2.
     for i in prange(out_size):
-        out_i = np.empty(MAX_DIMS, dtype=np.int32)
-        to_index(i, out_shape, out_i)
-        out_index = out_i[0:4]
+        out_index = np.empty(MAX_DIMS, dtype=np.int32)
+        to_index(i, out_shape, out_index)
         total = 0.0
         for j in prange(in_channels):
             for h in range(kh):
@@ -243,7 +241,7 @@ def _tensor_conv2d(
                             in_pos = index_to_position(in_index, s1)
                             total += input[in_pos] * weight[w_p]
                     else:
-                        if height - out_index[2] - h > 0 and width - out_index[3] - w > 0:
+                        if height > out_index[2] + h and width > out_index[3] + w:
                             in_index = np.array([out_index[0], j, out_index[2] + h, out_index[3] + w], dtype=np.int32)
                             in_pos = index_to_position(in_index, s1)
                             total += input[in_pos] * weight[w_p]

@@ -26,11 +26,9 @@ def tile(input: Tensor, kernel: Tuple[int, int]) -> Tuple[Tensor, int, int]:
     # TODO: Implement for Task 4.3.
     h = height // kh
     w = width // kw
-    input = input.contiguous()
-    input = input.view(batch, channel, h, kh, w, kw)
-    input = input.permute(0, 1, 2, 4, 3, 5)
-    input = input.contiguous()
-    input = input.view(batch, channel, h, w, kh * kw)
+    # input = input.contiguous()
+    input = input.contiguous().view(batch, channel, height, w, kw).permute(0, 1, 3, 2, 4)
+    input = input.contiguous().view(batch, channel, w, h, kh * kw).permute(0, 1, 3, 2, 4)
     return input, h, w
     # raise NotImplementedError("Need to implement for Task 4.3")
 
@@ -49,9 +47,7 @@ def avgpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
     batch, channel, height, width = input.shape
     # TODO: Implement for Task 4.3.
     input, h, w = tile(input, kernel)
-    input = input.mean(4)
-    input = input.view(batch, channel, h, w)
-    return input
+    return input.mean(4).view(batch, channel, h, w)
     # raise NotImplementedError("Need to implement for Task 4.3")
 
 

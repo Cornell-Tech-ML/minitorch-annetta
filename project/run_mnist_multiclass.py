@@ -69,22 +69,22 @@ class Network(minitorch.Module):
         self.out = None
 
         # TODO: Implement for Task 4.5.
-        self.conv1 = Conv2d(in_channels=1, out_channels=4, kh=3, kw=3)
-        self.conv2 = Conv2d(in_channels=4, out_channels=8, kh=3, kw=3)
-        self.linear1 = Linear(in_size=392, out_size=64)
-        self.linear2 = Linear(in_size=64, out_size=10)
+        self.layer1 = Conv2d(in_channels=1, out_channels=4, kh=3, kw=3)
+        self.layer2 = Conv2d(in_channels=4, out_channels=8, kh=3, kw=3)
+        self.layer3 = Linear(in_size=392, out_size=64)
+        self.layer4 = Linear(in_size=64, out_size=C)
         # raise NotImplementedError("Need to implement for Task 4.5")
 
     def forward(self, x):
         # TODO: Implement for Task 4.5.
-        self.mid = self.conv1.forward(x).relu()
-        self.out = self.conv2.forward(self.mid).relu()
-        pooling = minitorch.avgpool2d(self.out, (4, 4)).view(BATCH, 392)
-        x = self.linear1.forward(pooling).relu()
-        if self.training:
-            x = minitorch.dropout(pooling, 0.25)
-        x1 = self.linear2.forward(x)
-        return minitorch.logsoftmax(x1, 1)
+        x = self.layer1(x).relu()
+        self.mid = x
+        self.out = self.layer2(self.mid).relu()
+        x = minitorch.nn.avgpool2d(self.out, (4, 4))
+        x = x.view(x.size // 392, 392)
+        x = self.layer3(x).relu()
+        x = minitorch.nn.dropout(x, 0.25, not self.training)
+        return minitorch.nn.logsoftmax(self.layer4(x), dim=1)
         # raise NotImplementedError("Need to implement for Task 4.5")
 
 

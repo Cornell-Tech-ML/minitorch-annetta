@@ -94,8 +94,7 @@ class CNNSentimentKim(minitorch.Module):
         conv3 = self.conv3(embeddings).relu()
         output = minitorch.max(conv1, 2) + minitorch.max(conv2, 2) + minitorch.max(conv3, 2)
         output = output.view(batch, self.feature_map_size)
-        if self.training:
-            output = minitorch.dropout(output, self.dropout)
+        output = minitorch.dropout(output, self.dropout, not self.training)
         return self.linear(output).sigmoid()
         # raise NotImplementedError("Need to implement for Task 4.5")
 
