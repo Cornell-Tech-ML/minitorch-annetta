@@ -81,7 +81,26 @@ def _tensor_conv1d(
     s2 = weight_strides
 
     # TODO: Implement for Task 4.1.
-    raise NotImplementedError("Need to implement for Task 4.1")
+    for i in prange(out_size):
+        out_index = np.empty(MAX_DIMS, dtype=np.int32)
+        to_index(i, out_shape, out_index)
+        out_index = out_index[0:3]
+        total = 0.0
+        for j in prange(in_channels):
+            for k in prange(kw):
+                w_i = np.array([out_index[1], j, k], dtype=np.int32)
+                w_p = index_to_position(w_i, s2)
+                if reversed:
+                    if out_index[2] - k >= 0:
+                        in_index = np.array([out_index[0], j, out_index[2] - k], dtype=np.int32)
+                        in_pos = index_to_position(in_index, s1)
+                        total += input[in_pos] * weight[w_p]
+                else:
+                    if width - out_index[2] - k - 1 >= 0:
+                        in_index = np.array([out_index[0], j, out_index[2] + k], dtype=np.int32)
+                        in_pos = index_to_position(in_index, s1)
+                        total += input[in_pos] * weight[w_p]
+    # raise NotImplementedError("Need to implement for Task 4.1")
 
 
 tensor_conv1d = njit(parallel=True)(_tensor_conv1d)
@@ -207,7 +226,28 @@ def _tensor_conv2d(
     s20, s21, s22, s23 = s2[0], s2[1], s2[2], s2[3]
 
     # TODO: Implement for Task 4.2.
-    raise NotImplementedError("Need to implement for Task 4.2")
+    for i in prange(out_size):
+        out_i = np.empty(MAX_DIMS, dtype=np.int32)
+        to_index(i, out_shape, out_i)
+        out_index = out_i[0:4]
+        total = 0.0
+        for j in prange(in_channels):
+            for h in range(kh):
+                for w in range(kw):
+                    w_i = np.array([out_index[1], j, h, w], dtype=np.int32)
+                    w_p = index_to_position(w_i, s2)
+                    if reverse:
+                        if out_index[2] - h >= 0 and out_index[3] - w >= 0:
+                            in_index = np.array([out_index[0], j, out_index[2] - h, out_index[3] - w], dtype=np.int32)
+                            in_pos = index_to_position(in_index, s1)
+                            total += input[in_pos] * weight[w_p]
+                    else:
+                        if height - out_index[2] - h - 1 >= 0 and width - out_index[3] - w - 1 >= 0:
+                            in_index = np.array([out_index[0], j, out_index[2] + h, out_index[3] + w], dtype=np.int32)
+                            in_pos = index_to_position(in_index, s1)
+                            total += input[in_pos] * weight[w_p]
+        out[i] = total
+    # raise NotImplementedError("Need to implement for Task 4.2")
 
 
 tensor_conv2d = njit(parallel=True, fastmath=True)(_tensor_conv2d)

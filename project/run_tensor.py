@@ -2,6 +2,7 @@
 Be sure you have minitorch installed in you Virtual Env.
 >>> pip install -Ue .
 """
+import time
 
 import minitorch
 
@@ -21,7 +22,11 @@ class Network(minitorch.Module):
         self.layer3 = Linear(hidden_layers, 1)
 
     def forward(self, x):
-        raise NotImplementedError("Need to include this file from past assignment.")
+        # TODO: Implement for Task 2.5.
+        h1 = self.layer1.forward(x).relu()
+        h2 = self.layer2.forward(h1).relu()
+        return self.layer3.forward(h2).sigmoid()
+        # raise NotImplementedError("Need to implement for Task 2.5")
 
 
 class Linear(minitorch.Module):
@@ -32,11 +37,23 @@ class Linear(minitorch.Module):
         self.out_size = out_size
 
     def forward(self, x):
-        raise NotImplementedError("Need to include this file from past assignment.")
+        # TODO: Implement for Task 2.5.
+        batch_size, in_size = x.shape
+        return (
+            self.weights.value.view(1, in_size, self.out_size)
+            * x.view(batch_size, in_size, 1)
+        ).sum(1).view(batch_size, self.out_size) + self.bias.value.view(self.out_size)
+        # raise NotImplementedError("Need to implement for Task 2.5")
 
 
-def default_log_fn(epoch, total_loss, correct, losses):
-    print("Epoch ", epoch, " loss ", total_loss, "correct", correct)
+def default_log_fn(epoch, total_loss, correct, losses, time_taken):
+    print(
+        "Epoch ", epoch, ": loss ", total_loss, "correct", correct, "| time", time_taken
+    )
+
+
+def time_fn(epoch, start_time):
+    return time.time() - start_time
 
 
 class TensorTrain:
@@ -51,7 +68,6 @@ class TensorTrain:
         return self.model.forward(minitorch.tensor(X))
 
     def train(self, data, learning_rate, max_epochs=500, log_fn=default_log_fn):
-
         self.learning_rate = learning_rate
         self.max_epochs = max_epochs
         self.model = Network(self.hidden_layers)
@@ -61,9 +77,15 @@ class TensorTrain:
         y = minitorch.tensor(data.y)
 
         losses = []
+
+        total_epoch_time = 0.0
+        totol_time = 0.0
         for epoch in range(1, self.max_epochs + 1):
             total_loss = 0.0
             correct = 0
+            start_time = time.time()
+            t0 = time.time()
+
             optim.zero_grad()
 
             # Forward
@@ -73,7 +95,11 @@ class TensorTrain:
             loss = -prob.log()
             (loss / data.N).sum().view(1).backward()
             total_loss = loss.sum().view(1)[0]
+            curr_epoch_time = time_fn(epoch, t0)
+            total_epoch_time += curr_epoch_time
             losses.append(total_loss)
+            totol_time += time.time() - start_time
+            start_time = time.time()
 
             # Update
             optim.step()
@@ -82,7 +108,11 @@ class TensorTrain:
             if epoch % 10 == 0 or epoch == max_epochs:
                 y2 = minitorch.tensor(data.y)
                 correct = int(((out.detach() > 0.5) == y2).sum()[0])
-                log_fn(epoch, total_loss, correct, losses)
+                log_fn(epoch, total_loss, correct, losses, totol_time / 10)
+                totol_time = 0.0
+        print(
+            f"Average time per epoch {total_epoch_time/max_epochs} (for {max_epochs} epochs)"
+        )
 
 
 if __name__ == "__main__":

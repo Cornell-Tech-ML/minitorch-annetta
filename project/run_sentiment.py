@@ -35,7 +35,8 @@ class Conv1d(minitorch.Module):
 
     def forward(self, input):
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError("Need to implement for Task 4.5")
+        return minitorch.conv1d(input, self.weights.value) + self.bias.value
+        # raise NotImplementedError("Need to implement for Task 4.5")
 
 
 class CNNSentimentKim(minitorch.Module):
@@ -62,14 +63,42 @@ class CNNSentimentKim(minitorch.Module):
         super().__init__()
         self.feature_map_size = feature_map_size
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError("Need to implement for Task 4.5")
+        self.conv1 = Conv1d(
+            in_channels=embedding_size,
+            out_channels=feature_map_size,
+            kernel_width=filter_sizes[0],
+        )
+        self.conv2 = Conv1d(
+            in_channels=embedding_size,
+            out_channels=feature_map_size,
+            kernel_width=filter_sizes[1],
+        )
+        self.conv3 = Conv1d(
+            in_channels=embedding_size,
+            out_channels=feature_map_size,
+            kernel_width=filter_sizes[2],
+        )
+        self.linear = Linear(in_size=feature_map_size, out_size=1)
+        self.dropout = dropout
+        # raise NotImplementedError("Need to implement for Task 4.5")
 
     def forward(self, embeddings):
         """
         embeddings tensor: [batch x sentence length x embedding dim]
         """
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError("Need to implement for Task 4.5")
+        batch, sentence_length, embedding_dim = embeddings.shape
+        embeddings = embeddings.permute(0, 2, 1)
+        conv1 = self.conv1(embeddings).relu()
+        conv2 = self.conv2(embeddings).relu()
+        conv3 = self.conv3(embeddings).relu()
+        
+        output = minitorch.max(conv1, 2) + minitorch.max(conv2, 2) + minitorch.max(conv3, 2)   
+        output = output.view(batch, self.feature_map_size)
+        if self.training:
+            output = minitorch.dropout(output, self.dropout)
+        return self.linear(output).sigmoid()
+        # raise NotImplementedError("Need to implement for Task 4.5")
 
 
 # Evaluation helper methods
