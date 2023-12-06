@@ -179,7 +179,7 @@ class Conv1dFun(Function):
         return grad_input, grad_weight
 
 
-conv1d = Conv1dFun.apply
+cuda_conv1d = Conv1dFun.apply
 
 
 @cuda.jit
@@ -326,4 +326,4 @@ class Conv2dFun(Function):
         return grad_input, grad_weight
 
 
-conv2d = Conv2dFun.apply
+cuda_conv2d = Conv2dFun.apply
