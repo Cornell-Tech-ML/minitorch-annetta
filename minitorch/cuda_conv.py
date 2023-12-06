@@ -33,7 +33,6 @@ broadcast_index = cuda.jit(device=True)(broadcast_index)
 THREADS_PER_BLOCK = 32
 
 
-@cuda.jit
 def _cuda_tensor_conv1d(
     out: Tensor,
     out_shape: Shape,
@@ -182,7 +181,6 @@ class Conv1dFun(Function):
 cuda_conv1d = Conv1dFun.apply
 
 
-@cuda.jit
 def _cuda_tensor_conv2d(
     out: Tensor,
     out_shape: Shape,
