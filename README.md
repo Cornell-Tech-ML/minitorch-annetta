@@ -1,8 +1,5 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/5gWs3A8E)
-# MiniTorch Module 4
-
-## Extra Credict 4.4b 
-<img width="640" alt="image" src="https://github.com/Cornell-Tech-ML/mle-module-4-93c3173d-annetta-zheng/assets/67286396/0556d81d-d16c-480c-8159-5a378a919965">
+# MiniTorch 
+MiniTorch is a diy teaching library for machine learning engineers who wish to learn about the internal concepts underlying deep learning systems. It is a pure Python re-implementation of the Torch API designed to be simple, easy-to-read, tested, and incremental. The final library can run Torch code.
 
 <img src="https://minitorch.github.io/minitorch.svg" width="50%">
 
